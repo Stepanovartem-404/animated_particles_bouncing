@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  /* Styling for the page */
+  body {
+    margin: 0;
+    overflow: hidden;
+    background-color: #222;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="particleCanvas"></canvas>
+
+<script>
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+
+// Set canvas dimensions
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// Particle class
+class Particle {
+  constructor(x, y, radius, color) {
+    this.x = x;
+    this.y = y;
+    this.radius = radius;
+    this.color = color;
+    this.velocityX = Math.random() * 6 - 3;
+    this.velocityY = Math.random() * 6 - 3;
+  }
+
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+  }
+
+  update() {
+    this.draw();
+    
+    // Change particle position based on velocity
+    this.x += this.velocityX;
+    this.y += this.velocityY;
+    
+    // Reflect off the canvas edges
+    if (this.x + this.radius > canvas.width || this.x - this.radius < 0) {
+      this.velocityX = -this.velocityX;
+    }
+    if (this.y + this.radius > canvas.height || this.y - this.radius < 0) {
+      this.velocityY = -this.velocityY;
+    }
+  }
+}
+
+const particles = [];
+
+function init() {
+  for (let i = 0; i < 100; i++) {
+    const radius = Math.random() * 20 + 10;
+    const x = Math.random() * (canvas.width - radius * 2) + radius;
+    const y = Math.random() * (canvas.height - radius * 2) + radius;
+    const color = `rgb(${Math.random() * 255},${Math.random() * 255},${Math.random() * 255})`;
+    particles.push(new Particle(x, y, radius, color));
+  }
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (const particle of particles) {
+    particle.update();
+  }
+}
+
+init();
+animate();
+</script>
+
+</body>
+</html>
